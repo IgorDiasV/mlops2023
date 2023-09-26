@@ -4,16 +4,17 @@ import requests
 import xmltodict
 
 from airflow.decorators import dag, task
-import pendulum
 from airflow.providers.sqlite.operators.sqlite import SqliteOperator
 from airflow.providers.sqlite.hooks.sqlite import SqliteHook
 
+import pendulum
 from vosk import Model, KaldiRecognizer
 from pydub import AudioSegment
 
 PODCAST_URL = "https://www.marketplace.org/feed/podcast/marketplace/"
 EPISODE_FOLDER = "episodes"
 FRAME_RATE = 16000
+
 
 @dag(
     dag_id='podcast_summary',
@@ -22,6 +23,8 @@ FRAME_RATE = 16000
     catchup=False,
 )
 def podcast_summary():
+    "If it doesn't already exist, create a table to store the episode"
+
     create_database = SqliteOperator(
         task_id='create_table_sqlite',
         sql=r"""
@@ -39,7 +42,7 @@ def podcast_summary():
 
     @task()
     def get_episodes():
-        data = requests.get(PODCAST_URL)
+        data = requests.get(PODCAST_URL, timeout=20)
         feed = xmltodict.parse(data.text)
         episodes = feed["rss"]["channel"]["item"]
         print(f"Found {len(episodes)} episodes.")
@@ -81,9 +84,9 @@ def podcast_summary():
             audio_path = os.path.join(EPISODE_FOLDER, filename)
             if not os.path.exists(audio_path):
                 print(f"Downloading {filename}")
-                audio = requests.get(episode["enclosure"]["@url"])
-                with open(audio_path, "wb+") as f:
-                    f.write(audio.content)
+                audio = requests.get(episode["enclosure"]["@url"], timeout=20)
+                with open(audio_path, "wb+") as file:
+                    file.write(audio.content)
             audio_files.append({
                 "link": episode["link"],
                 "filename": filename
@@ -123,8 +126,4 @@ def podcast_summary():
                              target_fields=["link", "transcript"],
                              replace=True)
 
-    # Uncomment this to try speech to text (may not work)
-    # speech_to_text(audio_files, new_episodes)
-
-
-summary = podcast_summary()
+podcast_summary()
