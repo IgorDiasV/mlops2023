@@ -54,7 +54,7 @@ dummies = pd.get_dummies(customers_modif[['marital_status']], drop_first=True)
 customers_modif = pd.concat([customers_modif, dummies], axis=1)
 customers_modif.drop(['marital_status'], axis=1, inplace=True)
 
-print(customers_modif.shape)
+# print(customers_modif.shape)
 customers_modif.head()
 
 
