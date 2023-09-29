@@ -9,7 +9,8 @@ from IPython.display import display
 
 def user_recs(df_all_users):
     """
-        returns the ratio between the number of films and the number of unique users
+        returns the ratio between the number
+        of films and the number of unique users
     """
     qtd_movies = df_all_users["movieId"].value_counts()
     qtd_users = len(df_all_users["userId"].unique())
