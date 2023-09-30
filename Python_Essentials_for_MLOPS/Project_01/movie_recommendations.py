@@ -5,6 +5,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import ipywidgets as widgets
 from IPython.display import display
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 
 def user_recs(df_all_users):
@@ -40,7 +43,9 @@ def on_type_movie_input(data):
         movie_list.clear_output()
         title = data["new"]
         if len(title) > 5:
+            logging.info("starting the search for similar films")
             display(search(title))
+            logging.info("Finished the search for similar films")
 
 
 def find_similar_movies(movie_id):
@@ -75,10 +80,11 @@ def on_type_recommendation_list(data):
         recommendation_list.clear_output()
         title = data["new"]
         if len(title) > 5:
+            logging.info("starting the search for similar films")
             results = search(title)
             movie_id = results.iloc[0]["movieId"]
             display(find_similar_movies(movie_id))
-
+            logging.info("Finished the search for recommended films")
 
 if __name__ == "__main__":
     movies = pd.read_csv("ml-25m/movies.csv")
