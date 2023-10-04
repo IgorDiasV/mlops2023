@@ -119,8 +119,11 @@ if __name__ == "__main__":
     similar_user_recs = ratings[(ratings["userId"].isin(similar_users)) &
                                 (ratings["rating"] > 4)]["movieId"]
 
-    similar_user_recs = similar_user_recs.value_counts() / len(similar_users)
-
+    try:
+        similar_user_recs = similar_user_recs.value_counts() / len(similar_users)
+    except ZeroDivisionError:
+        logging.error("no similar users found")
+        
     similar_user_recs = similar_user_recs[similar_user_recs > .10]
 
     all_users = ratings[(ratings["movieId"].isin(similar_user_recs.index)) &
