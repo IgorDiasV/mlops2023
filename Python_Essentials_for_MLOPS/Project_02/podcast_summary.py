@@ -47,7 +47,7 @@ def podcast_summary():
         data = requests.get(PODCAST_URL, timeout=20)
         feed = xmltodict.parse(data.text)
         episodes = feed["rss"]["channel"]["item"]
-        logging.info(f"Found {len(episodes)} episodes.")
+        logging.info("Found %s episodes.", len(episodes))
         return episodes
 
     podcast_episodes = get_episodes()
@@ -87,7 +87,7 @@ def podcast_summary():
             filename = f"{name_end}.mp3"
             audio_path = os.path.join(EPISODE_FOLDER, filename)
             if not os.path.exists(audio_path):
-                logging.info(f"Downloading {filename}")
+                logging.info("Downloading %s", filename)
                 audio = requests.get(episode["enclosure"]["@url"], timeout=20)
                 with open(audio_path, "wb+") as file:
                     file.write(audio.content)
@@ -110,7 +110,7 @@ def podcast_summary():
         rec.SetWords(True)
 
         for index, row in untranscribed_episodes.iterrows():
-            logging.info(f"Transcribing {row['filename']}")
+            logging.info("Transcribing %s", row['filename'])
             filepath = os.path.join(EPISODE_FOLDER, row["filename"])
             mp3 = AudioSegment.from_mp3(filepath)
             mp3 = mp3.set_channels(1)
@@ -119,7 +119,7 @@ def podcast_summary():
             step = 20000
             transcript = ""
             for i in range(0, len(mp3), step):
-                logging.info(f"Progress: {i/len(mp3)}")
+                logging.info("Progress: %s", i/len(mp3))
                 segment = mp3[i:i+step]
                 rec.AcceptWaveform(segment.raw_data)
                 result = rec.Result()
