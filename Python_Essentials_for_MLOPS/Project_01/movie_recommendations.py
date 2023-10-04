@@ -28,7 +28,9 @@ def user_recs(df_all_users: pd.DataFrame) -> float:
 
 
 def clean_title(title: str) -> str:
-    """ removes unwanted characters from the title """
+    """ Remove from the title any character
+        that is not a letter or a number. """
+
     title = re.sub("[^a-zA-Z0-9 ]", "", title)
     return title
 
