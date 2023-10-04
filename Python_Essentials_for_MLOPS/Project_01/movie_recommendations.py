@@ -11,7 +11,7 @@ from IPython.display import display
 logging.basicConfig(level=logging.INFO)
 
 
-def user_recs(df_all_users):
+def user_recs(df_all_users: pd.DataFrame) -> float:
     """
         returns the ratio between the number
         of films and the number of unique users
@@ -21,13 +21,13 @@ def user_recs(df_all_users):
     return qtd_movies / qtd_users
 
 
-def clean_title(title):
+def clean_title(title: str) -> str:
     """ removes unwanted characters from the title """
     title = re.sub("[^a-zA-Z0-9 ]", "", title)
     return title
 
 
-def search(title):
+def search(title: str) -> pd.DataFrame:
     """ returns the 5 most similar films """
     title = clean_title(title)
     query_vec = vectorizer.transform([title])
@@ -35,6 +35,7 @@ def search(title):
     indices = np.argpartition(similarity, -5)[-5:]
     results = movies.iloc[indices].iloc[::-1]
 
+    print(type(results))
     return results
 
 
@@ -49,7 +50,7 @@ def on_type_movie_input(data):
             logging.info("Finished the search for similar films")
 
 
-def find_similar_movies(movie_id):
+def find_similar_movies(movie_id: int) -> pd.DataFrame:
     """search for recommendation movies"""
     similar_users = ratings[(ratings["movieId"] == movie_id) &
                             (ratings["rating"] > 4)]["userId"].unique()
@@ -87,8 +88,10 @@ def on_type_recommendation_list(data):
             display(find_similar_movies(movie_id))
             logging.info("Finished the search for recommended films")
 
+
 if __name__ == "__main__":
-    movies = pd.read_csv("ml-25m/movies.csv")
+    
+    movies = pd.read_csv(r"Python_Essentials_for_MLOPS\Project_01\ml-25m\movies.csv")
     movies["clean_title"] = movies["title"].apply(clean_title)
 
     vectorizer = TfidfVectorizer(ngram_range=(1, 2))
@@ -111,7 +114,7 @@ if __name__ == "__main__":
     # def find_similar_movies(movie_id):
     movie = movies[movies["movieId"] == MOVIE_ID]
 
-    ratings = pd.read_csv("ml-25m/ratings.csv")
+    ratings = pd.read_csv(r"Python_Essentials_for_MLOPS\Project_01\ml-25m\ratings.csv")
 
     similar_users = ratings[(ratings["movieId"] == MOVIE_ID) &
                             (ratings["rating"] > 4)]["userId"].unique()
