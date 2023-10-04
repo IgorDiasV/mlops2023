@@ -18,7 +18,13 @@ def user_recs(df_all_users: pd.DataFrame) -> float:
     """
     qtd_movies = df_all_users["movieId"].value_counts()
     qtd_users = len(df_all_users["userId"].unique())
-    return qtd_movies / qtd_users
+    
+    try:
+        result = qtd_movies / qtd_users
+    except ValueError:
+        result = 0
+    
+    return result
 
 
 def clean_title(title: str) -> str:
@@ -35,12 +41,12 @@ def search(title: str) -> pd.DataFrame:
     indices = np.argpartition(similarity, -5)[-5:]
     results = movies.iloc[indices].iloc[::-1]
 
-    print(type(results))
     return results
 
 
 def on_type_movie_input(data):
     """displays movies with similar names"""
+
     with movie_list:
         movie_list.clear_output()
         title = data["new"]
@@ -52,6 +58,7 @@ def on_type_movie_input(data):
 
 def find_similar_movies(movie_id: int) -> pd.DataFrame:
     """search for recommendation movies"""
+
     similar_users = ratings[(ratings["movieId"] == movie_id) &
                             (ratings["rating"] > 4)]["userId"].unique()
     similar_user_recs = ratings[(ratings["userId"].isin(similar_users)) &
@@ -78,6 +85,7 @@ def find_similar_movies(movie_id: int) -> pd.DataFrame:
 
 def on_type_recommendation_list(data):
     """displays movie recommendation"""
+
     with recommendation_list:
         recommendation_list.clear_output()
         title = data["new"]
@@ -111,7 +119,6 @@ if __name__ == "__main__":
 
     MOVIE_ID = 89745
 
-    # def find_similar_movies(movie_id):
     movie = movies[movies["movieId"] == MOVIE_ID]
 
     ratings = pd.read_csv(r"Python_Essentials_for_MLOPS\Project_01\ml-25m\ratings.csv")
