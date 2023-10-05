@@ -21,7 +21,7 @@ def user_recs(df_all_users: pd.DataFrame) -> float:
     
     try:
         result = qtd_movies / qtd_users
-    except ValueError:
+    except ZeroDivisionError:
         result = 0
     
     return result
