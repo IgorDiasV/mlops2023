@@ -2,6 +2,7 @@
 from movie_recommendations import clean_title
 import pandas as pd
 
+
 def test_clean_title():
     title = "test title"
     title2 = "test.// tit...le"

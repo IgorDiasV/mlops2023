@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
+import logging
 
+logging.basicConfig(level=logging.INFO)
 np.random.seed(42)
 
 sns.set_style('whitegrid')
@@ -12,10 +14,8 @@ sns.set_style('whitegrid')
 
 customers = pd.read_csv('./customer_segmentation.csv')
 
-customers.head()
-
-
-for col in ['gender', 'education_level', 'marital_status']:
+columns_list = ['gender', 'education_level', 'marital_status']
+for col in columns_list:
     print(col)
     print(customers[col].value_counts(), end='\n\n')
 
@@ -47,6 +47,7 @@ customers_modif.replace(to_replace={'Uneducated': 0,
                                     'Graduate': 3,
                                     'Post-Graduate': 4,
                                     'Doctorate': 5}, inplace=True)
+
 customers_modif['education_level'].head()
 
 dummies = pd.get_dummies(customers_modif[['marital_status']], drop_first=True)
@@ -61,7 +62,10 @@ customers_modif.head()
 X = customers_modif.drop('customer_id', axis=1)
 
 scaler = StandardScaler()
+
+logging.info("starting training")
 scaler.fit(X)
+logging.info("training completed")
 
 X_scaled = scaler.transform(X)
 
@@ -82,8 +86,9 @@ plt.tight_layout()
 plt.show()
 
 model = KMeans(n_clusters=6)
+logging.info("starting prediction")
 y = model.fit_predict(X_scaled)
-
+logging.info("prediction completed")
 customers['CLUSTER'] = y + 1
 
 
