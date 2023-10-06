@@ -1,3 +1,4 @@
+"""data pipeline for downloading podcast episodes"""
 import os
 import json
 import logging
@@ -44,11 +45,14 @@ def podcast_summary():
 
     @task()
     def get_episodes():
+
         data = requests.get(PODCAST_URL, timeout=20)
         feed = xmltodict.parse(data.text)
         episodes = feed["rss"]["channel"]["item"]
         logging.info("Found %s episodes.", len(episodes))
         return episodes
+
+
 
     podcast_episodes = get_episodes()
     create_database.set_downstream(podcast_episodes)
@@ -63,7 +67,7 @@ def podcast_summary():
             if episode["link"] not in stored_episodes["link"].values:
                 filename = f"{episode['link'].split('/')[-1]}.mp3"
 
-                new_episodes.append([episode["link"], 
+                new_episodes.append([episode["link"],
                                      episode["title"],
                                      episode["pubDate"],
                                      episode["description"],
@@ -79,7 +83,7 @@ def podcast_summary():
         logging.info("finished load")
         return new_episodes
 
-    new_episodes = load_episodes(podcast_episodes)
+    _ = load_episodes(podcast_episodes)
 
     @task()
     def download_episodes(episodes):
@@ -99,7 +103,7 @@ def podcast_summary():
             })
         return audio_files
 
-    audio_files = download_episodes(podcast_episodes)
+    _ = download_episodes(podcast_episodes)
 
     @task()
     def speech_to_text():
@@ -115,7 +119,7 @@ def podcast_summary():
         rec = KaldiRecognizer(model, FRAME_RATE)
         rec.SetWords(True)
 
-        for index, row in untranscribed_episodes.iterrows():
+        for _, row in untranscribed_episodes.iterrows():
             logging.info("Transcribing %s", row['filename'])
             filepath = os.path.join(EPISODE_FOLDER, row["filename"])
             mp3 = AudioSegment.from_mp3(filepath)
