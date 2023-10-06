@@ -16,6 +16,28 @@ np.random.seed(42)
 sns.set_style('whitegrid')
 
 
+def show_scartplot():
+    """function to group scartplot graphs"""
+    _, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 8))
+    sns.scatterplot(x='age', y='months_on_book', hue='CLUSTER',
+                    data=customers, palette='tab10', alpha=0.4, ax=ax1)
+
+    sns.scatterplot(x='estimated_income', y='credit_limit',
+                    hue='CLUSTER', data=customers, palette='tab10',
+                    alpha=0.4, ax=ax2, legend=False)
+
+    sns.scatterplot(x='credit_limit', y='avg_utilization_ratio',
+                    hue='CLUSTER', data=customers, palette='tab10',
+                    alpha=0.4, ax=ax3)
+
+    sns.scatterplot(x='total_trans_count', y='total_trans_amount',
+                    hue='CLUSTER', data=customers, palette='tab10',
+                    alpha=0.4, ax=ax4, legend=False)
+
+    plt.tight_layout()
+    plt.show()
+
+
 customers = pd.read_csv('./customer_segmentation.csv')
 
 columns_list = ['gender', 'education_level', 'marital_status']
@@ -110,26 +132,7 @@ for i, column in enumerate(numeric_columns):
 plt.tight_layout()
 plt.show()
 
-
-fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 8))
-sns.scatterplot(x='age', y='months_on_book', hue='CLUSTER',
-                data=customers, palette='tab10', alpha=0.4, ax=ax1)
-
-sns.scatterplot(x='estimated_income', y='credit_limit',
-                hue='CLUSTER', data=customers, palette='tab10',
-                alpha=0.4, ax=ax2, legend=False)
-
-sns.scatterplot(x='credit_limit', y='avg_utilization_ratio',
-                hue='CLUSTER', data=customers, palette='tab10',
-                alpha=0.4, ax=ax3)
-
-sns.scatterplot(x='total_trans_count', y='total_trans_amount',
-                hue='CLUSTER', data=customers, palette='tab10',
-                alpha=0.4, ax=ax4, legend=False)
-
-plt.tight_layout()
-plt.show()
-
+show_scartplot()
 
 cat_columns = customers.select_dtypes(include=['object'])
 

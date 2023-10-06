@@ -140,5 +140,5 @@ def podcast_summary():
                              target_fields=["link", "transcript"],
                              replace=True)
 
-    speech_to_text()
+    # speech_to_text()
 podcast_summary()
