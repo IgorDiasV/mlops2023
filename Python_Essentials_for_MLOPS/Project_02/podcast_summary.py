@@ -44,11 +44,15 @@ def podcast_summary():
 
     @task()
     def get_episodes():
-        data = requests.get(PODCAST_URL, timeout=20)
-        feed = xmltodict.parse(data.text)
-        episodes = feed["rss"]["channel"]["item"]
-        logging.info("Found %s episodes.", len(episodes))
-        return episodes
+        try:
+            data = requests.get(PODCAST_URL, timeout=20)
+            feed = xmltodict.parse(data.text)
+            episodes = feed["rss"]["channel"]["item"]
+            logging.info("Found %s episodes.", len(episodes))
+            return episodes
+        except requests.exceptions.HTTPError:
+            logging.error("Unable to get the episode")
+
 
     podcast_episodes = get_episodes()
     create_database.set_downstream(podcast_episodes)
