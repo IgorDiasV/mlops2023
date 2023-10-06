@@ -1,3 +1,6 @@
+"""
+code for customer segmentation.
+"""
 import logging
 import pandas as pd
 import numpy as np
