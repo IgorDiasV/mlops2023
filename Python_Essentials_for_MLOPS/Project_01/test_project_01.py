@@ -12,8 +12,8 @@ def test_clean_title():
 
 
 def test_load_files():
-    movies = pd.read_csv(r"Python_Essentials_for_MLOPS\Project_01\ml-25m\movies.csv")
-    ratings = pd.read_csv(r"Python_Essentials_for_MLOPS\Project_01\ml-25m\ratings.csv")
+    movies = pd.read_csv("Python_Essentials_for_MLOPS/Project_01/ml-25m/movies.csv")
+    ratings = pd.read_csv("Python_Essentials_for_MLOPS/Project_01/ml-25m/ratings.csv")
 
     assert isinstance(movies, pd.DataFrame)
     assert isinstance(ratings, pd.DataFrame)

@@ -101,7 +101,7 @@ def on_type_recommendation_list(data):
 
 if __name__ == "__main__":
     
-    movies = pd.read_csv(r"Python_Essentials_for_MLOPS\Project_01\ml-25m\movies.csv")
+    movies = pd.read_csv("Python_Essentials_for_MLOPS/Project_01/ml-25m/movies.csv")
     movies["clean_title"] = movies["title"].apply(clean_title)
 
     vectorizer = TfidfVectorizer(ngram_range=(1, 2))
@@ -123,7 +123,7 @@ if __name__ == "__main__":
 
     movie = movies[movies["movieId"] == MOVIE_ID]
 
-    ratings = pd.read_csv(r"Python_Essentials_for_MLOPS\Project_01\ml-25m\ratings.csv")
+    ratings = pd.read_csv("Python_Essentials_for_MLOPS/Project_01/ml-25m/ratings.csv")
 
     similar_users = ratings[(ratings["movieId"] == MOVIE_ID) &
                             (ratings["rating"] > 4)]["userId"].unique()
