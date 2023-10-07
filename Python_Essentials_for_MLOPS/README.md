@@ -6,4 +6,7 @@ To run the projects provided in this repository, you need to have Python 3 insta
 pip install -r requirements.txt
 ```
 
-Certificado: https://app.dataquest.io/verify_cert/CJM9MHA3YNJDPFQNEMGW/
+Below is the link to a video with more details about the projects and the refactorings performed. Also, the link to the certificate obtained during the unit is shown.
+
+Video Link:
+Certificate Link: https://app.dataquest.io/view_cert/KTA4GF92BJ0985O7NE8Y
