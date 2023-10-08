@@ -38,6 +38,13 @@ def show_scartplot():
     plt.show()
 
 
+def visualize_data_correlation(data):
+    """ show a heatmap with of correlation"""
+    _, ax = plt.subplots(figsize=(12, 8))
+    sns.heatmap(round(data.drop('customer_id', axis=1).corr(), 2), cmap='Blues', annot=True, ax=ax)
+    plt.tight_layout()
+    plt.show()
+
 customers = pd.read_csv('./customer_segmentation.csv')
 
 columns_list = ['gender', 'education_level', 'marital_status']
@@ -46,12 +53,7 @@ for col in columns_list:
     print(customers[col].value_counts(), end='\n\n')
 
 
-fig, ax = plt.subplots(figsize=(12, 8))
-sns.heatmap(round(customers.drop('customer_id', axis=1).corr(), 2),
-            cmap='Blues', annot=True, ax=ax)
-
-plt.tight_layout()
-plt.show()
+visualize_data_correlation(customers.copy())
 
 fig, ax = plt.subplots(figsize=(12, 10))
 
