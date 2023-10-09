@@ -8,21 +8,18 @@ import numpy as np
 import ipywidgets as widgets
 from IPython.display import display
 
+DATA_DIR = "Python_Essentials_for_MLOPS/Project_01/ml-25m/"
 
 logging.basicConfig(level=logging.INFO)
 
 def load_files():
     """loads the dataframes used in the code"""
-    df_movies = pd.read_csv("Python_Essentials_for_MLOPS/Project_01/ml-25m/movies.csv")
-    df_ratings = pd.read_csv("Python_Essentials_for_MLOPS/Project_01/ml-25m/ratings.csv")
-
+    df_movies = pd.read_csv(DATA_DIR + "movies.csv")
+    df_ratings = pd.read_csv(DATA_DIR + "ratings.csv")
     return df_movies, df_ratings
 
-def user_recs(df_all_users: pd.DataFrame) -> float:
-    """
-        returns the ratio between the number
-        of films and the number of unique users
-    """
+def calculate_user_recs(df_all_users: pd.DataFrame) -> float:
+    """Calculates the ratio of movies to unique users."""
     qtd_movies = df_all_users["movieId"].value_counts()
     qtd_users = len(df_all_users["userId"].unique())
 
@@ -37,19 +34,17 @@ def user_recs(df_all_users: pd.DataFrame) -> float:
 def clean_title(title: str) -> str:
     """ Remove from the title any character
         that is not a letter or a number. """
-
     title = re.sub("[^a-zA-Z0-9 ]", "", title)
     return title
 
 
-def search(title: str) -> pd.DataFrame:
+def search_similar_movies(title: str) -> pd.DataFrame:
     """ returns the 5 most similar films """
     title = clean_title(title)
     query_vec = vectorizer.transform([title])
     similarity = cosine_similarity(query_vec, tfidf).flatten()
     indices = np.argpartition(similarity, -5)[-5:]
     results = movies.iloc[indices].iloc[::-1]
-
     return results
 
 
@@ -61,7 +56,7 @@ def on_type_movie_input(data):
         title = data["new"]
         if len(title) > 5:
             logging.info("starting the search for similar films")
-            display(search(title))
+            display(search_similar_movies(title))
             logging.info("Finished the search for similar films")
 
 
@@ -72,18 +67,22 @@ def find_similar_movies(movie_id: int) -> pd.DataFrame:
                             (ratings["rating"] > 4)]["userId"].unique()
     similar_user_recs = ratings[(ratings["userId"].isin(similar_users)) &
                                 (ratings["rating"] > 4)]["movieId"]
-    similar_user_recs = similar_user_recs.value_counts() / len(similar_users)
+
+    try:
+        similar_user_recs = similar_user_recs.value_counts() / len(similar_users)
+    except ZeroDivisionError:
+        logging.error("No similar users found")
 
     similar_user_recs = similar_user_recs[similar_user_recs > .10]
     all_users = ratings[(ratings["movieId"].isin(similar_user_recs.index)) &
                         (ratings["rating"] > 4)]
+    all_user_recs = calculate_user_recs(all_users)
 
-    all_user_recs = user_recs(all_users)
     rec_percentages = pd.concat([similar_user_recs, all_user_recs], axis=1)
     rec_percentages.columns = ["similar", "all"]
-
     rec_percentages["score"] = rec_percentages["similar"] / rec_percentages["all"]
     rec_percentages = rec_percentages.sort_values("score", ascending=False)
+ 
     top_recpercentages = rec_percentages.head(10)
     similar_movies = top_recpercentages.merge(movies,
                                               left_index=True,
@@ -100,7 +99,7 @@ def on_type_recommendation_list(data):
         title = data["new"]
         if len(title) > 5:
             logging.info("starting the search for similar films")
-            results = search(title)
+            results = search_similar_movies(title)
             movie_id = results.iloc[0]["movieId"]
             display(find_similar_movies(movie_id))
             logging.info("Finished the search for recommended films")
@@ -147,7 +146,7 @@ if __name__ == "__main__":
     all_users = ratings[(ratings["movieId"].isin(similar_user_recs.index)) &
                         (ratings["rating"] > 4)]
 
-    all_user_recs = user_recs(all_users)
+    all_user_recs = calculate_user_recs(all_users)
 
     rec_percentages = pd.concat([similar_user_recs, all_user_recs], axis=1)
     rec_percentages.columns = ["similar", "all"]
