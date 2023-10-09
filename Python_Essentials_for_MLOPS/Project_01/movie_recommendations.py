@@ -1,3 +1,4 @@
+"""get five movie recommendations based on a chosen movie"""
 import re
 import logging
 import pandas as pd
@@ -10,6 +11,12 @@ from IPython.display import display
 
 logging.basicConfig(level=logging.INFO)
 
+def load_files():
+    """loads the dataframes used in the code"""
+    df_movies = pd.read_csv("Python_Essentials_for_MLOPS/Project_01/ml-25m/movies.csv")
+    df_ratings = pd.read_csv("Python_Essentials_for_MLOPS/Project_01/ml-25m/ratings.csv")
+
+    return df_movies, df_ratings
 
 def user_recs(df_all_users: pd.DataFrame) -> float:
     """
@@ -18,12 +25,12 @@ def user_recs(df_all_users: pd.DataFrame) -> float:
     """
     qtd_movies = df_all_users["movieId"].value_counts()
     qtd_users = len(df_all_users["userId"].unique())
-    
+
     try:
         result = qtd_movies / qtd_users
     except ZeroDivisionError:
         result = 0
-    
+
     return result
 
 
@@ -100,8 +107,9 @@ def on_type_recommendation_list(data):
 
 
 if __name__ == "__main__":
-    
-    movies = pd.read_csv("Python_Essentials_for_MLOPS/Project_01/ml-25m/movies.csv")
+
+    movies, ratings = load_files()
+
     movies["clean_title"] = movies["title"].apply(clean_title)
 
     vectorizer = TfidfVectorizer(ngram_range=(1, 2))
@@ -123,8 +131,6 @@ if __name__ == "__main__":
 
     movie = movies[movies["movieId"] == MOVIE_ID]
 
-    ratings = pd.read_csv("Python_Essentials_for_MLOPS/Project_01/ml-25m/ratings.csv")
-
     similar_users = ratings[(ratings["movieId"] == MOVIE_ID) &
                             (ratings["rating"] > 4)]["userId"].unique()
 
@@ -135,7 +141,7 @@ if __name__ == "__main__":
         similar_user_recs = similar_user_recs.value_counts() / len(similar_users)
     except ZeroDivisionError:
         logging.error("no similar users found")
-        
+
     similar_user_recs = similar_user_recs[similar_user_recs > .10]
 
     all_users = ratings[(ratings["movieId"].isin(similar_user_recs.index)) &
