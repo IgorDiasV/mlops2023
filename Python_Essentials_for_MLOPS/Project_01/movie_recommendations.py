@@ -12,11 +12,13 @@ DATA_DIR = "Python_Essentials_for_MLOPS/Project_01/ml-25m/"
 
 logging.basicConfig(level=logging.INFO)
 
+
 def load_files():
     """loads the dataframes used in the code"""
     df_movies = pd.read_csv(DATA_DIR + "movies.csv")
     df_ratings = pd.read_csv(DATA_DIR + "ratings.csv")
     return df_movies, df_ratings
+
 
 def calculate_user_recs(df_all_users: pd.DataFrame) -> float:
     """Calculates the ratio of movies to unique users."""
