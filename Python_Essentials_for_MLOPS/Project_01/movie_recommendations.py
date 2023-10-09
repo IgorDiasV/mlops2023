@@ -47,6 +47,16 @@ def search_similar_movies(title: str) -> pd.DataFrame:
     results = movies.iloc[indices].iloc[::-1]
     return results
 
+def create_widget(function_input_change):
+    """Creates and returns the widget."""
+    widget_input = widgets.Text(
+        value='Toy Story',
+        description='Movie Title:',
+        disabled=False
+    )
+    widget_output = widgets.Output()
+    widget_input.observe(function_input_change, names='value')
+    return widget_input, widget_output
 
 def on_type_movie_input(data):
     """displays movies with similar names"""
@@ -115,14 +125,7 @@ if __name__ == "__main__":
 
     tfidf = vectorizer.fit_transform(movies["clean_title"])
 
-    movie_input = widgets.Text(
-        value='Toy Story',
-        description='Movie Title:',
-        disabled=False
-    )
-    movie_list = widgets.Output()
-
-    movie_input.observe(on_type_movie_input, names='value')
+    movie_input, movie_list = create_widget(on_type_movie_input)
 
     display(movie_input, movie_list)
 
@@ -157,13 +160,6 @@ if __name__ == "__main__":
 
     rec_percentages.head(10).merge(movies, left_index=True, right_on="movieId")
 
-    movie_name_input = widgets.Text(
-        value='Toy Story',
-        description='Movie Title:',
-        disabled=False
-    )
-    recommendation_list = widgets.Output()
-
-    movie_name_input.observe(on_type_recommendation_list, names='value')
-
+    movie_name_input, recommendation_list = create_widget(on_type_recommendation_list)
+    
     display(movie_name_input, recommendation_list)
