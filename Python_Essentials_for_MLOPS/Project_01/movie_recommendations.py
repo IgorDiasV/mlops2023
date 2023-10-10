@@ -50,6 +50,7 @@ def search_similar_movies(title: str) -> pd.DataFrame:
     results = movies.iloc[indices].iloc[::-1]
     return results
 
+
 def create_widget(function_input_change):
     """Creates and returns the widget."""
     widget_input = widgets.Text(
@@ -61,6 +62,7 @@ def create_widget(function_input_change):
     widget_input.observe(function_input_change, names='value')
     return widget_input, widget_output
 
+
 def on_type_movie_input(data):
     """displays movies with similar names"""
 
@@ -71,6 +73,7 @@ def on_type_movie_input(data):
             logging.info("starting the search for similar films")
             display(search_similar_movies(title))
             logging.info("Finished the search for similar films")
+
 
 def find_recommendations(movie_id: int) -> pd.DataFrame:
     """search for recommendation movies"""
@@ -101,6 +104,7 @@ def find_recommendations(movie_id: int) -> pd.DataFrame:
                                               right_on="movieId")
     similar_movies = similar_movies[["score", "title", "genres"]]
     return similar_movies
+
 
 def on_type_recommendation_list(data):
     """displays movie recommendation"""
