@@ -45,7 +45,7 @@ def podcast_summary():
 
     @task()
     def get_episodes():
-
+        """Get episodes from a given link"""
         data = requests.get(PODCAST_URL, timeout=20)
         feed = xmltodict.parse(data.text)
         episodes = feed["rss"]["channel"]["item"]
@@ -59,6 +59,7 @@ def podcast_summary():
 
     @task()
     def load_episodes(episodes):
+        """load the new episode and return it"""
         logging.info("starting to load the episode")
         hook = SqliteHook(sqlite_conn_id="podcasts")
         stored_episodes = hook.get_pandas_df("SELECT * from episodes;")
@@ -87,6 +88,7 @@ def podcast_summary():
 
     @task()
     def download_episodes(episodes):
+        """download the episode"""
         audio_files = []
         for episode in episodes:
             name_end = episode["link"].split('/')[-1]
