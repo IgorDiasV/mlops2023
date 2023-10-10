@@ -9,6 +9,7 @@ import seaborn as sns
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
+PATH = 'Python_Essentials_for_MLOPS/Project_03/'
 
 logging.basicConfig(level=logging.INFO)
 np.random.seed(42)
@@ -45,7 +46,14 @@ def visualize_data_correlation(data):
     plt.tight_layout()
     plt.show()
 
-customers = pd.read_csv('./customer_segmentation.csv')
+
+def load_file():
+    """ load file used in the code"""
+    df_customer = pd.read_csv(PATH + 'customer_segmentation.csv')
+    return df_customer
+
+
+customers = load_file()
 
 columns_list = ['gender', 'education_level', 'marital_status']
 for col in columns_list:

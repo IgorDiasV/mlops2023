@@ -1,6 +1,8 @@
 import pandas as pd
+from credit_card_customer_segmentation import load_file
+
 
 def test_load_file():
-    customers = pd.read_csv("Python_Essentials_for_MLOPS/Project_03/customer_segmentation.csv")
+    customers = load_file()
 
     assert isinstance(customers, pd.DataFrame)
