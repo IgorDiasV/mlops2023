@@ -16,6 +16,9 @@ After cloning the repository, it is necessary to access the folder of this proje
  cd mlops2023/Python_Essentials_for_MLOPS/Project_01
 ```
 Once this is done, it is necessary to install the prerequisites shown in the section below.
+
+After installing the prerequisites, simply use the notebook 'movie_recommendations.' The code was designed to be used in the main 'mlops' folder, so if opened in a different folder, you may need to adjust the DATA_DIR variable to specify the location where the CSV files are located.
+
 ## Prerequisites
 It is necessary to have Python 3 installed and the modules listed in the requirements file. To install the modules, you can use the following command:
 
