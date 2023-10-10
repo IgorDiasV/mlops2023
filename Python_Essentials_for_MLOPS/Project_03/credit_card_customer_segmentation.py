@@ -42,7 +42,12 @@ def show_scartplot():
 def visualize_data_correlation(data):
     """ show a heatmap with of correlation"""
     _, axes = plt.subplots(figsize=(12, 8))
-    sns.heatmap(round(data.drop('customer_id', axis=1).corr(), 2),
+    drop_columns = ['customer_id', 'gender', 
+                    'education_level', 'marital_status']
+    
+    data = data.drop(drop_columns, axis=1)
+
+    sns.heatmap(round(data.corr(), 2),
                 cmap='Blues',
                 annot=True,
                 ax=axes)
