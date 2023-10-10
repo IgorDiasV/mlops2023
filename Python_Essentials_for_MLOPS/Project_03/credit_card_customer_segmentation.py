@@ -41,8 +41,11 @@ def show_scartplot():
 
 def visualize_data_correlation(data):
     """ show a heatmap with of correlation"""
-    _, ax = plt.subplots(figsize=(12, 8))
-    sns.heatmap(round(data.drop('customer_id', axis=1).corr(), 2), cmap='Blues', annot=True, ax=ax)
+    _, axes = plt.subplots(figsize=(12, 8))
+    sns.heatmap(round(data.drop('customer_id', axis=1).corr(), 2),
+                cmap='Blues',
+                annot=True,
+                ax=axes)
     plt.tight_layout()
     plt.show()
 
@@ -54,6 +57,7 @@ def load_file():
 
 
 def preprocess_customer_data(data):
+    """ function to process customer data"""
     data['gender'] = data['gender'].apply(lambda x: 1 if x == 'M' else 0)
 
     data.replace(to_replace={'Uneducated': 0,
@@ -81,18 +85,23 @@ def preprocess_customer_data(data):
     data_scaled = scaler.transform(data)
 
     preprocess_data = pd.DataFrame(data_scaled)
-    
+
     return preprocess_data.copy(), data_scaled.copy()
 
+
 def find_optimal_clusters(data):
+    """Find the optimal number of clusters"""
     inertias = []
     for k in range(1, 11):
         model = KMeans(n_clusters=k)
-        y = model.fit_predict(data)
+        _ = model.fit_predict(data)
         inertias.append(model.inertia_)
 
     return inertias
+
+
 def visualize_inertia_n_clusters(inertias):
+    """shows a graph of the relationship in number of clusters and Inertia"""
     plt.figure(figsize=(12, 8))
     plt.plot(range(1, 11), inertias, marker='o')
     plt.xticks(ticks=range(1, 11), labels=range(1, 11))
@@ -101,7 +110,9 @@ def visualize_inertia_n_clusters(inertias):
     plt.tight_layout()
     plt.show()
 
+
 def train_kmeans_model(data_scaled):
+    """train the model"""
     model = KMeans(n_clusters=6)
     logging.info("starting prediction")
     train_model = model.fit_predict(data_scaled)
@@ -109,17 +120,19 @@ def train_kmeans_model(data_scaled):
 
     return train_model
 
-def visualize_cluster_data(customers):
-    numeric_columns = customers.select_dtypes(include=np.number)
+
+def visualize_cluster_data(data):
+    """ show the cluster data"""
+    numeric_columns = data.select_dtypes(include=np.number)
     numeric_columns = numeric_columns.drop(
                         ['customer_id', 'CLUSTER'], axis=1).columns
     fig = plt.figure(figsize=(20, 20))
     for i, column in enumerate(numeric_columns):
-        df_plot = customers.groupby('CLUSTER')[column].mean()
-        ax = fig.add_subplot(5, 2, i+1)
-        ax.bar(df_plot.index, df_plot, color=sns.color_palette('Set1'), alpha=0.6)
-        ax.set_title(f'Average {column.title()} per Cluster', alpha=0.5)
-        ax.xaxis.grid(False)
+        df_plot = data.groupby('CLUSTER')[column].mean()
+        axes = fig.add_subplot(5, 2, i+1)
+        axes.bar(df_plot.index, df_plot, color=sns.color_palette('Set1'), alpha=0.6)
+        axes.set_title(f'Average {column.title()} per Cluster', alpha=0.5)
+        axes.xaxis.grid(False)
 
     plt.tight_layout()
     plt.show()
@@ -131,17 +144,17 @@ def visualize_cluster_data(customers):
     fig = plt.figure(figsize=(18, 6))
     for i, col in enumerate(cat_columns):
         plot_df = pd.crosstab(index=customers['CLUSTER'], columns=customers[col],
-                            values=customers[col], aggfunc='size', normalize='index')
-        ax = fig.add_subplot(1, 3, i+1)
-        plot_df.plot.bar(stacked=True, ax=ax, alpha=0.6)
-        ax.set_title(f'% {col.title()} per Cluster', alpha=0.5)
+                              values=customers[col], aggfunc='size', normalize='index')
+        axes = fig.add_subplot(1, 3, i+1)
+        plot_df.plot.bar(stacked=True, ax=axes, alpha=0.6)
+        axes.set_title(f'% {col.title()} per Cluster', alpha=0.5)
 
-        ax.set_ylim(0, 1.4)
-        ax.legend(frameon=False)
-        ax.xaxis.grid(False)
+        axes.set_ylim(0, 1.4)
+        axes.legend(frameon=False)
+        axes.xaxis.grid(False)
 
         labels = [0, 0.2, 0.4, 0.6, 0.8, 1]
-        ax.set_yticklabels(labels)
+        axes.set_yticklabels(labels)
 
     plt.tight_layout()
     plt.show()
@@ -152,18 +165,17 @@ if __name__ == "__main__":
     customers = load_file()
     visualize_data_correlation(customers.copy())
 
-    fig, ax = plt.subplots(figsize=(12, 10))
-    customers.drop('customer_id', axis=1).hist(ax=ax)
+    _, axle = plt.subplots(figsize=(12, 10))
+    customers.drop('customer_id', axis=1).hist(ax=axle)
     plt.tight_layout()
     plt.show()
-    
-    customers_modif = customers.copy()
-    preprocessed_data, data_scaled = preprocess_customer_data(customers_modif)
-    inertias = find_optimal_clusters(preprocessed_data.copy())
 
-    visualize_inertia_n_clusters(inertias)
-    train_model = train_kmeans_model(preprocessed_data)
-    customers['CLUSTER'] = train_model + 1
+    customers_modif = customers.copy()
+    preprocessed_data, preprocess_data_scaled = preprocess_customer_data(customers_modif)
+    inertias_list = find_optimal_clusters(preprocessed_data.copy())
+
+    visualize_inertia_n_clusters(inertias_list)
+    trained_model = train_kmeans_model(preprocess_data_scaled)
+    customers['CLUSTER'] = trained_model + 1
 
     visualize_cluster_data(customers)
-
