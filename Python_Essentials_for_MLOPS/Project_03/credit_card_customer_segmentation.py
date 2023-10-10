@@ -53,113 +53,117 @@ def load_file():
     return df_customer
 
 
-customers = load_file()
+def preprocess_customer_data(data):
+    data['gender'] = data['gender'].apply(lambda x: 1 if x == 'M' else 0)
 
-columns_list = ['gender', 'education_level', 'marital_status']
-for col in columns_list:
-    print(col)
-    print(customers[col].value_counts(), end='\n\n')
+    data.replace(to_replace={'Uneducated': 0,
+                             'High School': 1,
+                             'College': 2,
+                             'Graduate': 3,
+                             'Post-Graduate': 4,
+                             'Doctorate': 5}, inplace=True)
+
+    data['education_level'].head()
+
+    dummies = pd.get_dummies(data[['marital_status']], drop_first=True)
+
+    data = pd.concat([data, dummies], axis=1)
+    data.drop(['marital_status'], axis=1, inplace=True)
+
+    data = data.drop('customer_id', axis=1)
+
+    scaler = StandardScaler()
+
+    logging.info("starting training")
+    scaler.fit(data)
+    logging.info("training completed")
+
+    data_scaled = scaler.transform(data)
+
+    preprocess_data = pd.DataFrame(data_scaled)
+    
+    return preprocess_data.copy(), data_scaled.copy()
+
+def find_optimal_clusters(data):
+    inertias = []
+    for k in range(1, 11):
+        model = KMeans(n_clusters=k)
+        y = model.fit_predict(data)
+        inertias.append(model.inertia_)
+
+    return inertias
+def visualize_inertia_n_clusters(inertias):
+    plt.figure(figsize=(12, 8))
+    plt.plot(range(1, 11), inertias, marker='o')
+    plt.xticks(ticks=range(1, 11), labels=range(1, 11))
+    plt.title('Inertia vs Number of Clusters')
+
+    plt.tight_layout()
+    plt.show()
+
+def train_kmeans_model(data_scaled):
+    model = KMeans(n_clusters=6)
+    logging.info("starting prediction")
+    train_model = model.fit_predict(data_scaled)
+    logging.info("prediction completed")
+
+    return train_model
+
+def visualize_cluster_data(customers):
+    numeric_columns = customers.select_dtypes(include=np.number)
+    numeric_columns = numeric_columns.drop(
+                        ['customer_id', 'CLUSTER'], axis=1).columns
+    fig = plt.figure(figsize=(20, 20))
+    for i, column in enumerate(numeric_columns):
+        df_plot = customers.groupby('CLUSTER')[column].mean()
+        ax = fig.add_subplot(5, 2, i+1)
+        ax.bar(df_plot.index, df_plot, color=sns.color_palette('Set1'), alpha=0.6)
+        ax.set_title(f'Average {column.title()} per Cluster', alpha=0.5)
+        ax.xaxis.grid(False)
+
+    plt.tight_layout()
+    plt.show()
+
+    show_scartplot()
+
+    cat_columns = customers.select_dtypes(include=['object'])
+
+    fig = plt.figure(figsize=(18, 6))
+    for i, col in enumerate(cat_columns):
+        plot_df = pd.crosstab(index=customers['CLUSTER'], columns=customers[col],
+                            values=customers[col], aggfunc='size', normalize='index')
+        ax = fig.add_subplot(1, 3, i+1)
+        plot_df.plot.bar(stacked=True, ax=ax, alpha=0.6)
+        ax.set_title(f'% {col.title()} per Cluster', alpha=0.5)
+
+        ax.set_ylim(0, 1.4)
+        ax.legend(frameon=False)
+        ax.xaxis.grid(False)
+
+        labels = [0, 0.2, 0.4, 0.6, 0.8, 1]
+        ax.set_yticklabels(labels)
+
+    plt.tight_layout()
+    plt.show()
 
 
-visualize_data_correlation(customers.copy())
+if __name__ == "__main__":
 
-fig, ax = plt.subplots(figsize=(12, 10))
+    customers = load_file()
+    visualize_data_correlation(customers.copy())
 
-# Removing the customer's id before plotting the distributions
-customers.drop('customer_id', axis=1).hist(ax=ax)
+    fig, ax = plt.subplots(figsize=(12, 10))
+    customers.drop('customer_id', axis=1).hist(ax=ax)
+    plt.tight_layout()
+    plt.show()
+    
+    customers_modif = customers.copy()
+    preprocessed_data, data_scaled = preprocess_customer_data(customers_modif)
+    inertias = find_optimal_clusters(preprocessed_data.copy())
 
-plt.tight_layout()
-plt.show()
+    visualize_inertia_n_clusters(inertias)
+    train_model = train_kmeans_model(preprocessed_data)
+    customers['CLUSTER'] = train_model + 1
 
+    visualize_cluster_data(customers)
 
-customers_modif = customers.copy()
-customers_modif['gender'] = customers['gender'].apply(lambda x: 1 if x == 'M' else 0)
-customers_modif.head()
-
-
-customers_modif.replace(to_replace={'Uneducated': 0,
-                                    'High School': 1,
-                                    'College': 2,
-                                    'Graduate': 3,
-                                    'Post-Graduate': 4,
-                                    'Doctorate': 5}, inplace=True)
-
-customers_modif['education_level'].head()
-
-dummies = pd.get_dummies(customers_modif[['marital_status']], drop_first=True)
-
-customers_modif = pd.concat([customers_modif, dummies], axis=1)
-customers_modif.drop(['marital_status'], axis=1, inplace=True)
-
-# print(customers_modif.shape)
-customers_modif.head()
-
-
-X = customers_modif.drop('customer_id', axis=1)
-
-scaler = StandardScaler()
-
-logging.info("starting training")
-scaler.fit(X)
-logging.info("training completed")
-
-X_scaled = scaler.transform(X)
-
-X = pd.DataFrame(X_scaled)
-inertias = []
-
-for k in range(1, 11):
-    model = KMeans(n_clusters=k)
-    y = model.fit_predict(X)
-    inertias.append(model.inertia_)
-
-plt.figure(figsize=(12, 8))
-plt.plot(range(1, 11), inertias, marker='o')
-plt.xticks(ticks=range(1, 11), labels=range(1, 11))
-plt.title('Inertia vs Number of Clusters')
-
-plt.tight_layout()
-plt.show()
-
-model = KMeans(n_clusters=6)
-logging.info("starting prediction")
-y = model.fit_predict(X_scaled)
-logging.info("prediction completed")
-customers['CLUSTER'] = y + 1
-
-
-numeric_columns = customers.select_dtypes(include=np.number)
-numeric_columns = numeric_columns.drop(
-                    ['customer_id', 'CLUSTER'], axis=1).columns
-fig = plt.figure(figsize=(20, 20))
-for i, column in enumerate(numeric_columns):
-    df_plot = customers.groupby('CLUSTER')[column].mean()
-    ax = fig.add_subplot(5, 2, i+1)
-    ax.bar(df_plot.index, df_plot, color=sns.color_palette('Set1'), alpha=0.6)
-    ax.set_title(f'Average {column.title()} per Cluster', alpha=0.5)
-    ax.xaxis.grid(False)
-
-plt.tight_layout()
-plt.show()
-
-show_scartplot()
-
-cat_columns = customers.select_dtypes(include=['object'])
-
-fig = plt.figure(figsize=(18, 6))
-for i, col in enumerate(cat_columns):
-    plot_df = pd.crosstab(index=customers['CLUSTER'], columns=customers[col],
-                          values=customers[col], aggfunc='size', normalize='index')
-    ax = fig.add_subplot(1, 3, i+1)
-    plot_df.plot.bar(stacked=True, ax=ax, alpha=0.6)
-    ax.set_title(f'% {col.title()} per Cluster', alpha=0.5)
-
-    ax.set_ylim(0, 1.4)
-    ax.legend(frameon=False)
-    ax.xaxis.grid(False)
-
-    labels = [0, 0.2, 0.4, 0.6, 0.8, 1]
-    ax.set_yticklabels(labels)
-
-plt.tight_layout()
-plt.show()
