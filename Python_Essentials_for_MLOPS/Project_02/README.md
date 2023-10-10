@@ -26,3 +26,5 @@ You need to have Python 3 and Airflow installed. Additionally, you should have t
 ```
 pip install -r requirements.txt
 ```
+# Reference
+[Airflow Data Pipeline to Download Podcasts](https://app.dataquest.io/c/93/m/999911/build-an-airflow-data-pipeline-to-download-podcasts/1/project-overview-and-setting-up)
