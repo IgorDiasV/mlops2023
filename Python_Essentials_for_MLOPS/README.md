@@ -8,5 +8,6 @@ pip install -r requirements.txt
 
 Below is the link to a video with more details about the projects and the refactorings performed. Also, the link to the certificate obtained during the unit is shown.
 
-Video Link:
+Video Link: https://www.youtube.com/watch?v=EElH9NbYoIc
+
 Certificate Link: https://app.dataquest.io/view_cert/KTA4GF92BJ0985O7NE8Y
