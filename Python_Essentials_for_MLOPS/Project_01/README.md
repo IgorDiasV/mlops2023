@@ -23,3 +23,5 @@ It is necessary to have Python 3 installed and the modules listed in the require
 pip install -r requirements.txt
 ```
 
+# Reference
+[Movie Recommendation System in Python](https://app.dataquest.io/c/93/m/99994/build-a-movie-recommendation-system-in-python/1/introduction)
