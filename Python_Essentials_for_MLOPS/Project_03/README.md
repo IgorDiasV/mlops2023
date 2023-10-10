@@ -26,3 +26,5 @@ You need to have Python 3 installed. Additionally, you should have the modules l
 ```
 pip install -r requirements.txt
 ```
+# Reference
+[Project Credit Card Customer Segmentation](https://app.dataquest.io/c/135/m/745/guided-project%3A-credit-card-customer-segmentation/1/introduction?path=23&slug=machine-learning-in-python-skill&version=1)
