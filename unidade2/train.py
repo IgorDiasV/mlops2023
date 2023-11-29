@@ -76,3 +76,5 @@ model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
 model.fit(train_dataset, epochs=10, validation_data=train_dataset,
           callbacks=[wandb.keras.WandbCallback(save_model=False,
                                                    compute_flops=True)])
+
+wandb.finish()
