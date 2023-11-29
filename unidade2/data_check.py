@@ -5,9 +5,11 @@ import subprocess
 
 load_dotenv()
 
-chave_api = os.environ.get('KEY')
-wandb.login(key=chave_api)
 
-subprocess.run("pytest . -vv", shell=True)
+def data_check():
+    chave_api = os.environ.get('KEY')
+    wandb.login(key=chave_api)
 
-wandb.finish()
+    subprocess.run("pytest . -vv", shell=True)
+
+    wandb.finish()
