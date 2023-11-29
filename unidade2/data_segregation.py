@@ -1,15 +1,16 @@
 import os
 import wandb
 from dotenv import load_dotenv
-import subprocess
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
 load_dotenv()
 
+
 def load_data(data_path):
     data = pd.read_csv(os.path.join(data_path, 'clean_data.csv'))
     return data
+
 
 def split_data(data):
     X = data['final']
