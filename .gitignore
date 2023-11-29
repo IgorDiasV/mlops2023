@@ -162,4 +162,4 @@ cython_debug/
 nota.txt
 anotacoes.txt
 wandb/
-train.csv
+*.csv
