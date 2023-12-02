@@ -163,3 +163,6 @@ nota.txt
 anotacoes.txt
 wandb/
 *.csv
+mlops/
+artifacts/
+*.png
