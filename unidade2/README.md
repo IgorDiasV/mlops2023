@@ -10,6 +10,13 @@
 
 > Case study: pipeline creation through a guided [Dataquest](https://www.dataquest.io/) project
 
+
+### group members:
+Igor Dias Verissimo Oliveira
+
+Matheus Dos Santos Lopes Rodrigues
+
+
 ## Prerequisites
 
 Before you begin, make sure you have the following dependencies installed:
@@ -98,6 +105,7 @@ The folder structure of the project is organized as follows:
 
 ## References
 
+- [Project video explanation - PT-BR](https://youtu.be/K1x808WADkM)
+
 - [Guided Project: Classifying Disaster-Related Tweets as Real or Fake - Dataquest](https://app.dataquest.io/m/797/guided-project%3A-classifying-disaster-related-tweets-as-real-or-fake/1/loading-the-data)
 
-- [Project video explanation - PT-BR](https://youtu.be/K1x808WADkM)
