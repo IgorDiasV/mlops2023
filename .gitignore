@@ -166,3 +166,9 @@ wandb/
 mlops/
 artifacts/
 *.png
+mlruns/
+mlartifacts/
+
+# Weights
+pesos_rede.h5
+enconder
