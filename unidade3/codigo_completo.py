@@ -122,10 +122,6 @@ def train():
   y_train = encoder.transform(y_train)
   y_test = encoder.transform(y_test)
 
-
-
-  model = TFAutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased")
-
   train_encodings = tokenizer(list(X_train), truncation=True, padding=True)
   test_encodings = tokenizer(list(X_test), truncation=True, padding=True)
 
@@ -160,5 +156,5 @@ preprocessing()
 data_segregation()
 model, encoder = train()
 
-model.save_weights('pesos_rede.h5')
+model.save('modelo.keras')
 joblib.dump(encoder, 'enconder')
