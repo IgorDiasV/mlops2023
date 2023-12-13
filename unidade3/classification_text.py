@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 import joblib
 from transformers import AutoTokenizer
-
+from transformers import TFAutoModelForSequenceClassification
 class Classifytext():
     def __init__(self):
         self.model = self.load_model()
@@ -10,7 +10,14 @@ class Classifytext():
         self.tokenizer = self.load_tokenizer()
 
     def load_model(self):
-        model = tf.keras.saving.load_model("modelo.keras")
+
+        model = TFAutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=5)
+        optimizer=tf.keras.optimizers.Adam(learning_rate=3e-5)
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+        metrics=[tf.keras.metrics.SparseCategoricalAccuracy('accuracy')]
+        model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
+        model.load_weights('pesos_rede.h5')
+        
         return model 
 
     def load_enconder(self):
@@ -30,5 +37,5 @@ class Classifytext():
         predicted_category = tf.argmax(predictions.logits, axis=1).numpy()[0]
 
         predicted_category_label = self.encoder.inverse_transform([predicted_category])[0]
-        print("resultado: ", predicted_category_label)
+ 
         return predicted_category_label

@@ -160,5 +160,5 @@ preprocessing()
 data_segregation()
 model, encoder = train()
 
-model.save('modelo.keras')
+model.save_weights('pesos_rede.h5')
 joblib.dump(encoder, 'enconder')
