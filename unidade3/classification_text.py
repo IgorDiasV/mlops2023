@@ -39,3 +39,19 @@ class Classifytext():
         predicted_category_label = self.encoder.inverse_transform([predicted_category])[0]
  
         return predicted_category_label
+    
+    def predict_list_input(self, list_inputs):
+
+        list_predict = []
+        for texto in list_inputs:
+            user_encoding = self.tokenizer(texto, truncation=True, padding=True, return_tensors="tf")
+            user_encoding = {key: np.array(value) for key, value in user_encoding.items()}
+
+            predictions = self.model.predict(user_encoding)
+
+            predicted_category = tf.argmax(predictions.logits, axis=1).numpy()[0]
+
+            predicted_category_label = self.encoder.inverse_transform([predicted_category])[0]
+            list_predict.append(predicted_category_label)
+
+        return list_predict
