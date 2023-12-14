@@ -78,13 +78,17 @@ def split_data(data):
     return x_train, x_test, y_train, y_test
 
 def data_segregation():
-    data_path = "clean_data.csv"
-    data = load_data(data_path)
-    x_train, x_test, y_train, y_test = split_data(data)
-    train_data = pd.DataFrame({'text': x_train, 'category': y_train})
-    test_data = pd.DataFrame({'text': x_test, 'category': y_test})
-    train_data.to_csv('train_data.csv', index=False)
-    test_data.to_csv('test_data.csv', index=False)
+    with mlflow.start_run():
+        data_path = "clean_data.csv"
+        data = load_data(data_path)
+        x_train, x_test, y_train, y_test = split_data(data)
+        train_data = pd.DataFrame({'text': x_train, 'category': y_train})
+        test_data = pd.DataFrame({'text': x_test, 'category': y_test})
+        train_data.to_csv('train_data.csv', index=False)
+        test_data.to_csv('test_data.csv', index=False)
+
+        mlflow.log_artifact('train_data.csv')
+        mlflow.log_artifact('test_data.csv')
 
 tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
 
