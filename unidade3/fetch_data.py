@@ -2,7 +2,7 @@ import mlflow
 import requests
 
 def fetch_data():
-    with mlflow.start_run(run_id='fetch_data', run_name='fetch_data_run'):
+    with mlflow.start_run(run_name='fetch_data_run'):
 
         url = 'https://storage.googleapis.com/dataset-uploader/bbc/bbc-text.csv'
         response = requests.get(url)

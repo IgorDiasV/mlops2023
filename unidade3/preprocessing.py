@@ -5,9 +5,10 @@ from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 import mlflow
 import pandas as pd
+import os
 
 def preprocessing():
-    with mlflow.start_run(run_id='preprocessing', run_name='preprocessing_run'):
+    with mlflow.start_run(run_name='preprocessing_run'):
 
         def punctuations(inputs):
             return re.sub(r'[^a-zA-Z]', ' ', inputs)
@@ -26,6 +27,20 @@ def preprocessing():
         nltk.download('wordnet')
         nltk.download('omw-1.4')
 
+        
+        run_name = 'fetch_data_run'
+        runs = mlflow.search_runs(experiment_ids=mlflow.get_experiment_by_name("text_classification").experiment_id,
+                          filter_string=f"attributes.run_name='{run_name}'",
+                          order_by=["start_time desc"],
+                          max_results=1)
+
+        if not runs.empty:
+            run_id = runs.iloc[0]["run_id"]
+            mlflow.artifacts.download_artifacts(run_id=run_id, dst_path=os.getcwd())
+            print(f"Arquivo baixado com sucesso")
+        else:
+            print("Nenhum run encontrado para a etapa 'fetch_data'.")
+        
         df = pd.read_csv("bbc-text.csv")
         df['text'] = df['text'].str.lower()
         df['text'] = df['text'].apply(punctuations)

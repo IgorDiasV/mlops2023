@@ -7,6 +7,7 @@ from train import train
 from test_predict import test_predict
 
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_experiment(experiment_name='text_classification')
 
 pipeline = Pipeline()
 
@@ -22,20 +23,20 @@ def run_preprocessing():
     preprocessing()
 
 
-@pipeline.task(depends_on=run_preprocessing)
-def run_data_segregation():
-    print("running data segregation")
-    data_segregation()
+# @pipeline.task(depends_on=run_preprocessing)
+# def run_data_segregation():
+#     print("running data segregation")
+#     data_segregation()
 
 
-@pipeline.task(depends_on=run_data_segregation)
-def run_train():
-    print("running train")
-    train()
+# @pipeline.task(depends_on=run_data_segregation)
+# def run_train():
+#     print("running train")
+#     train()
 
-@pipeline.task(depends_on=run_train)
-def run_test():
-    print("running test")
-    test_predict()
+# @pipeline.task(depends_on=run_train)
+# def run_test():
+#     print("running test")
+#     test_predict()
 
 pipeline.run()
