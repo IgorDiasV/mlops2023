@@ -7,6 +7,10 @@ import joblib
 import mlflow
 import mlflow.sklearn
 import os
+from dotenv import load_dotenv
+from utils import download_artifacts_by_run_name
+load_dotenv()
+
 
 def load_data(data_path):
     data = pd.read_csv(data_path)
@@ -23,20 +27,13 @@ def train():
     with mlflow.start_run(run_name='train_run'):
         mlflow.autolog()
 
-        run_name = 'data_segregation_run'
-        runs = mlflow.search_runs(experiment_ids=mlflow.get_experiment_by_name("text_classification").experiment_id,
-                                    filter_string=f"attributes.run_name='{run_name}'",
-                                    order_by=["start_time desc"],
-                                    max_results=1)
-        if not runs.empty:
-            run_id = runs.iloc[0]["run_id"]
-            mlflow.artifacts.download_artifacts(run_id=run_id, dst_path=os.getcwd())
-            print(f"Arquivo baixado com sucesso")
-        else:
-            print("Nenhum run encontrado para a etapa 'data_segregation'.")
-
-        df_train = load_data("train_data.csv")
-        df_test = load_data("test_data.csv")
+        download_artifacts_by_run_name('data_segregation_run')
+        
+        PATH_TRAIN_DATA = os.environ.get("PATH_TRAIN_DATA")
+        PATH_TEST_DATA = os.environ.get("PATH_TEST_DATA")
+        
+        df_train = load_data(PATH_TRAIN_DATA)
+        df_test = load_data(PATH_TEST_DATA)
 
         X_train, y_train = split_x_y(df_train)
         X_test, y_test = split_x_y(df_test)
@@ -73,12 +70,15 @@ def train():
         metrics = [tf.keras.metrics.SparseCategoricalAccuracy('accuracy')]
 
         model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
-        model.fit(train_dataset, epochs=1, validation_data=train_dataset)
+        
+        PATH_WEIGHTS = os.environ.get("PATH_WEIGHTS")
+        PATH_ENCONDER = os.environ.get("PATH_ENCONDER")
+        # model.fit(train_dataset, epochs=1, validation_data=train_dataset)
 
-        model.save_weights('pesos_rede.h5')
+        model.save_weights(PATH_WEIGHTS)
 
-        joblib.dump(encoder, 'enconder')
+        joblib.dump(encoder, PATH_ENCONDER)
 
         # mlflow.sklearn.log_model(model, "model")
-        mlflow.log_artifact('enconder')
-        mlflow.log_artifact('pesos_rede.h5')
+        mlflow.log_artifact(PATH_ENCONDER)
+        mlflow.log_artifact(PATH_WEIGHTS)

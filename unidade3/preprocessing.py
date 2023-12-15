@@ -6,6 +6,10 @@ from nltk.stem.wordnet import WordNetLemmatizer
 import mlflow
 import pandas as pd
 import os
+from dotenv import load_dotenv
+from utils import download_artifacts_by_run_name
+
+load_dotenv()
 
 def preprocessing():
     with mlflow.start_run(run_name='preprocessing_run'):
@@ -27,21 +31,10 @@ def preprocessing():
         nltk.download('wordnet')
         nltk.download('omw-1.4')
 
-        
-        run_name = 'fetch_data_run'
-        runs = mlflow.search_runs(experiment_ids=mlflow.get_experiment_by_name("text_classification").experiment_id,
-                                  filter_string=f"attributes.run_name='{run_name}'",
-                                  order_by=["start_time desc"],
-                                  max_results=1)
+        download_artifacts_by_run_name('fetch_data_run')
+        PATH_DATASET = os.environ.get("PATH_DATASET")
 
-        if not runs.empty:
-            run_id = runs.iloc[0]["run_id"]
-            mlflow.artifacts.download_artifacts(run_id=run_id, dst_path=os.getcwd())
-            print(f"Arquivo baixado com sucesso")
-        else:
-            print("Nenhum run encontrado para a etapa 'fetch_data'.")
-        
-        df = pd.read_csv("bbc-text.csv")
+        df = pd.read_csv(PATH_DATASET)
         df['text'] = df['text'].str.lower()
         df['text'] = df['text'].apply(punctuations)
         df['text_tokenized'] = df['text'].apply(tokenization)
@@ -56,6 +49,6 @@ def preprocessing():
         df['text_lemmatized'] = df['text_stop'].apply(lemmatization)
         df['final'] = df['text_lemmatized'].str.join(' ')
 
-        path_clean_data = "clean_data.csv"
-        df.to_csv(path_clean_data)
-        mlflow.log_artifact(path_clean_data)
+        PATH_CLEAN_DATA = os.environ.get("PATH_CLEAN_DATA")
+        df.to_csv(PATH_CLEAN_DATA)
+        mlflow.log_artifact(PATH_CLEAN_DATA)

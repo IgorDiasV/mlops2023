@@ -5,9 +5,16 @@ from preprocessing import preprocessing
 from data_segregation import data_segregation
 from train import train
 from test_predict import test_predict
+from dotenv import load_dotenv
+import os
 
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
-mlflow.set_experiment(experiment_name='text_classification')
+load_dotenv()
+
+URL_MLFLOW = os.environ.get("URL_MLFLOW")
+EXPERIMENT_NAME = os.environ.get("EXPERIMENT_NAME")
+
+mlflow.set_tracking_uri(URL_MLFLOW)
+mlflow.set_experiment(experiment_name=EXPERIMENT_NAME)
 
 pipeline = Pipeline()
 

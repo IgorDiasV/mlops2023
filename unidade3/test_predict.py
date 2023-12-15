@@ -5,20 +5,18 @@ import matplotlib.pyplot as plt
 import mlflow
 import mlflow.sklearn
 import os
+from utils import download_artifacts_by_run_name
+from dotenv import load_dotenv
 
+load_dotenv()
 def test_predict():
 
-    run_name = 'train_run'
-    runs = mlflow.search_runs(experiment_ids=mlflow.get_experiment_by_name("text_classification").experiment_id,
-                                filter_string=f"attributes.run_name='{run_name}'",
-                                order_by=["start_time desc"],
-                                max_results=1)
-    
-    run_id = runs.iloc[0]["run_id"]
-    mlflow.artifacts.download_artifacts(run_id=run_id, dst_path=os.getcwd())
+    download_artifacts_by_run_name("train_run")
+   
     classificador = Classifytext() 
 
-    test_data = pd.read_csv("test_data.csv").head(5)
+    PATH_TEST_DATA = os.environ.get("PATH_TEST_DATA")
+    test_data = pd.read_csv(PATH_TEST_DATA).head(5)
     x_test = test_data['text']
     y_test = test_data['category']
 
