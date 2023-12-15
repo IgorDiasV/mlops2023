@@ -73,11 +73,11 @@ def train():
         metrics = [tf.keras.metrics.SparseCategoricalAccuracy('accuracy')]
 
         model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
-        # model.fit(train_dataset, epochs=1, validation_data=train_dataset)
+        model.fit(train_dataset, epochs=1, validation_data=train_dataset)
 
-        # model.save_weights('pesos_rede.h5')
+        model.save_weights('pesos_rede.h5')
 
-        # joblib.dump(encoder, 'enconder')
+        joblib.dump(encoder, 'enconder')
 
         # mlflow.sklearn.log_model(model, "model")
         mlflow.log_artifact('enconder')
