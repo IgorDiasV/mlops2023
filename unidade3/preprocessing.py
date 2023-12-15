@@ -30,9 +30,9 @@ def preprocessing():
         
         run_name = 'fetch_data_run'
         runs = mlflow.search_runs(experiment_ids=mlflow.get_experiment_by_name("text_classification").experiment_id,
-                          filter_string=f"attributes.run_name='{run_name}'",
-                          order_by=["start_time desc"],
-                          max_results=1)
+                                  filter_string=f"attributes.run_name='{run_name}'",
+                                  order_by=["start_time desc"],
+                                  max_results=1)
 
         if not runs.empty:
             run_id = runs.iloc[0]["run_id"]
