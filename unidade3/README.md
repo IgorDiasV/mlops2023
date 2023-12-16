@@ -85,6 +85,7 @@ python .\main.py
 ```bash
 python .\interface_gradio.py
 ```
+Navigate to http://localhost:7860/
 
 ## Folder Structure
 
