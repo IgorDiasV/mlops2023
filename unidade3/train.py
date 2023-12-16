@@ -73,12 +73,12 @@ def train():
         
         PATH_WEIGHTS = os.environ.get("PATH_WEIGHTS")
         PATH_ENCONDER = os.environ.get("PATH_ENCONDER")
-        # model.fit(train_dataset, epochs=1, validation_data=train_dataset)
+        model.fit(train_dataset, epochs=10, validation_data=train_dataset)
 
         model.save_weights(PATH_WEIGHTS)
 
         joblib.dump(encoder, PATH_ENCONDER)
 
-        # mlflow.sklearn.log_model(model, "model")
+        mlflow.sklearn.log_model(model, "model")
         mlflow.log_artifact(PATH_ENCONDER)
         mlflow.log_artifact(PATH_WEIGHTS)
