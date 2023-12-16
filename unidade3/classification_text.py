@@ -1,8 +1,12 @@
+import os
+import joblib
+from dotenv import load_dotenv
 import numpy as np
 import tensorflow as tf
-import joblib
 from transformers import AutoTokenizer
 from transformers import TFAutoModelForSequenceClassification
+
+load_dotenv()
 class Classifytext():
     def __init__(self):
         self.model = self.load_model()
@@ -10,18 +14,20 @@ class Classifytext():
         self.tokenizer = self.load_tokenizer()
 
     def load_model(self):
+        PATH_WEIGHTS = os.environ.get('PATH_WEIGHTS')
 
         model = TFAutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=5)
         optimizer=tf.keras.optimizers.Adam(learning_rate=3e-5)
         loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
         metrics=[tf.keras.metrics.SparseCategoricalAccuracy('accuracy')]
         model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
-        model.load_weights('pesos_rede.h5')
+        model.load_weights(PATH_WEIGHTS)
         
         return model 
 
     def load_enconder(self):
-        encoder = joblib.load('enconder')
+        PATH_ENCONDER = os.environ.get('PATH_ENCONDER')
+        encoder = joblib.load(PATH_ENCONDER)
         return encoder
     
     def load_tokenizer(self):
