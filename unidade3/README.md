@@ -51,6 +51,23 @@ This link can be found on the green `Code` button above.
 pip install -r requirements.txt
 ```
 
+### Environment variables
+
+Change the `.env-example` file to `.env`.
+
+```bash
+URL_MLFLOW = "http://127.0.0.1:5000"
+EXPERIMENT_NAME = ""
+PATH_DATASET = ""
+PATH_CLEAN_DATA = ""
+PATH_TRAIN_DATA = ""
+PATH_TEST_DATA = ""
+PATH_WEIGHTS = ""
+PATH_ENCONDER = ""
+```
+
+**Make sure you add values to null variables before continuing.**
+
 ### Run the project
 
 Instantiate the local MLflow server
