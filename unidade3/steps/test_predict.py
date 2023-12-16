@@ -16,7 +16,7 @@ def test_predict():
     classificador = Classifytext() 
 
     PATH_TEST_DATA = os.environ.get("PATH_TEST_DATA")
-    test_data = pd.read_csv(PATH_TEST_DATA).head(5)
+    test_data = pd.read_csv(PATH_TEST_DATA)
     x_test = test_data['text']
     y_test = test_data['category']
 

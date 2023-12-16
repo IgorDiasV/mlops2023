@@ -1,10 +1,10 @@
 import mlflow
 from pipeline import Pipeline
-from fetch_data import fetch_data
-from preprocessing import preprocessing
-from data_segregation import data_segregation
-from train import train
-from test_predict import test_predict
+from steps.fetch_data import fetch_data
+from steps.preprocessing import preprocessing
+from steps.data_segregation import data_segregation
+from steps.train import train
+from steps.test_predict import test_predict
 from dotenv import load_dotenv
 import os
 
