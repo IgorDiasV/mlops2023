@@ -168,6 +168,7 @@ artifacts/
 *.png
 mlruns/
 mlartifacts/
+flagged/
 
 # Weights
 pesos_rede.h5
