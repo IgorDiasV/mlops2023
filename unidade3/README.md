@@ -16,6 +16,9 @@
 
 - Matheus Dos Santos Lopes Rodrigues
 
+## Introdution
+
+This repository contains the code used for the development of a multi-class NLP and the code for creating a graphical interface for the user to interact with the model. For this purpose, MLflow was used to manage the model's steps, and Gradio was used to generate the graphical interface.
 
 ## Prerequisites
 
