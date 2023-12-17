@@ -1,4 +1,4 @@
-# Classifying topics with: Sport, Business, Technology, Politics and Entertainment
+# Classifying topics: Sport, Business, Technology, Politics and Entertainment
 
 <!-- Shields Exemplo, existem N diferentes shield em https://shields.io/ -->
 ![GitHub last commit](https://img.shields.io/github/last-commit/IgorDiasV/mlops2023)
@@ -97,17 +97,18 @@ The folder structure of the project is organized as follows:
 ```text
 /
 |-- unidade3/
-|   |-- classification_text.py
-|   |-- data_segregation.py
-|   |-- fetch_data.py
+|   |-- steps/
+|   |   |-- fetch_data.py
+|   |   |-- preprocessing.py
+|   |   |-- data_segregation.py
+|   |   |-- train.py
+|   |   |-- test_predict.py
 |   |-- interface_gradio.py
 |   |-- main.py
 |   |-- pipeline.py
-|   |-- preprocessing.py
-|   |-- requeriments.txt
-|   |-- test_predict.py
-|   |-- train.py
 |   |-- utils.py
+|   |-- classification_text.py
+|   |-- requeriments.txt
 |-- ...
 ```
 
