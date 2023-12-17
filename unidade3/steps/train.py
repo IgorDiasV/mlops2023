@@ -54,13 +54,7 @@ def train():
             tf.constant(y_train, dtype=tf.int32)
         ))
 
-        test_dataset = tf.data.Dataset.from_tensor_slices((
-            dict(test_encodings),
-            tf.constant(y_test, dtype=tf.int32)
-        ))
-
         train_dataset = train_dataset.batch(16)
-        test_dataset = test_dataset.batch(16)
 
         model = TFAutoModelForSequenceClassification.from_pretrained(
             "distilbert-base-uncased", num_labels=5)
